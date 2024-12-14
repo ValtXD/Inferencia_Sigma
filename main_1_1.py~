@@ -1,0 +1,48 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Dados da segunda coluna fornecida
+data = [199, 267, 272, 166, 239, 189, 238, 223, 279, 190, 240, 209, 210, 171, 255, 232, 147, 268, 231, 199, 255, 199, 228, 240, 184, 192, 211, 201, 203, 243, 181, 382, 186, 198, 165, 219, 196, 239, 259, 162, 178, 246, 176, 157, 179, 231, 183, 213, 230, 134, 181, 234, 161, 289, 186, 298, 211, 189, 164, 219, 287, 179, 216, 224, 212, 230, 231, 185, 180, 205, 219, 286, 261, 221, 194, 248, 216, 195, 217, 186, 218, 173, 221, 206, 215, 176, 240, 234, 190, 204, 256, 296, 223, 225, 217, 251, 187, 290, 238, 218]
+
+# Função g(μ) derivada da equação fornecida
+def g(mu_hat, data):
+    return -0.5 * sum(-2 * x + 2 * mu_hat for x in data)
+
+# Derivada de g(μ)
+def g_prime(mu_hat, n):
+    return n
+
+# Estimativa de Máxima Verossimilhança (EMV)
+mu_emv = np.mean(data)
+n = len(data)
+
+# Algoritmo de Newton-Raphson
+mu_nr = 0  # Chute inicial
+iterations = [mu_nr]  # Lista para registrar as iterações
+
+epsilon = 1e-6  # Critério de convergência
+max_iter = 100  # Número máximo de iterações
+
+for _ in range(max_iter):
+    g_value = g(mu_nr, data)
+    g_prime_value = g_prime(mu_nr, n)
+    mu_next = mu_nr - g_value / g_prime_value
+    iterations.append(mu_next)
+    if abs(mu_next - mu_nr) < epsilon:
+        break
+    mu_nr = mu_next
+
+# Gráfico
+plt.figure(figsize=(10, 6))
+plt.plot(iterations, label="Newton-Raphson", marker="o")
+plt.axhline(y=mu_emv, color="r", linestyle="--", label="EMV (μ̅)")
+plt.title(r"Estimativa de $\hat{\mu}$ usando Newton-Raphson e EMV")
+plt.xlabel("Iterações")
+plt.ylabel(r"$\hat{\mu}$")
+plt.legend()
+plt.grid()
+plt.show()
+
+# Resultados finais
+print(f"Estimativa de \u03bc usando Newton-Raphson: {mu_nr}")
+print(f"Estimativa de \u03bc usando EMV: {mu_emv}")
